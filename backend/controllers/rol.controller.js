@@ -7,7 +7,10 @@ rolCtrl.getRoles = async (req, res) => {
 }
 
 rolCtrl.createRol = async (req, res) => {
-  const rol = new  Rol(req.body);
+  const rol = new  Rol({
+    rol: req.body.rol,
+    estado: req.body.estado
+  });
   await rol.save();
   console.log(rol);
   res.json({
