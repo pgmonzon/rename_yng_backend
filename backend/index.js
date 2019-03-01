@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-
 const morgan = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -10,9 +9,8 @@ const config = require('./config')
 
 // Settings
 // ********
-// Port
 app.set('port', process.env.PORT || 3113)
-// db
+
 mongoose.connect(config.database, { useNewUrlParser: true })
   .then(db => console.log('MongoDB'))
   .catch(err => console.error(err));
