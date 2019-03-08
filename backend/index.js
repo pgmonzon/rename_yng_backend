@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const config = require('./config')
@@ -14,7 +13,6 @@ app.set('port', process.env.PORT || 3113)
 mongoose.connect(config.database, { useNewUrlParser: true })
   .then(db => console.log('MongoDB'))
   .catch(err => console.error(err));
-mongoose.Promise = global.Promise;
 
 app.set('superSecret', config.secret);
 
@@ -26,7 +24,9 @@ app.use(cors({origin: 'http://localhost:4200'}));
 
 // Routes
 // ******
+app.use('/api/autorizar', require('./routes/autorizar.routes'));
 app.use('/api/roles', require('./routes/roles.routes'));
+app.use('/api/usuarios', require('./routes/usuarios.routes'));
 
 // Starting the server
 // *******************
