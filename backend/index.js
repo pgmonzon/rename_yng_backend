@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
-const config = require('./config')
+const config = require('./config/config');
 
 // Settings
 // ********
@@ -13,8 +13,6 @@ app.set('port', process.env.PORT || 3113)
 mongoose.connect(config.database, { useNewUrlParser: true })
   .then(db => console.log('MongoDB'))
   .catch(err => console.error(err));
-
-app.set('superSecret', config.secret);
 
 // Middlewares
 // ***********

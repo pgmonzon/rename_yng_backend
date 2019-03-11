@@ -1,6 +1,9 @@
 const Usuario = require('../models/usuario');
 const usuarioCtrl = {};
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const config = require('../config/config');
+
 
 usuarioCtrl.getUsuarios = async (req, res) => {
   const usuarios = await Usuario.find()
@@ -43,16 +46,31 @@ usuarioCtrl.loginUsuario = async (req, res) => {
   const usuario = await Usuario.findOne({
     'usuario': req.body.usuario,
     'clave': req.body.clave
+  }).catch((error) => {
+    res.status(500).json({
+      success: false,
+      message: 'Acceso denegadowwwwwww'
+    });
   })
   if (usuario) {
-    const token = jwt.sign({usuario}, req.app.get('superSecret'));
-    res.json({
+    const payload = {
+      usuario : usuario.usuario
+    };
+    const signOptions = {
+      subject: req.body.usuario,
+      audience: req.hostname,
+      expiresIn: config.expiraEn,
+      algorithm: config.algoritmo
+    };
+
+    const token = jwt.sign(payload, fs.readFileSync(config.pathKeys+'/private.key', 'utf8'), signOptions);
+    res.status(200).json({
       success: true,
       message: 'Token',
       token: token
     });
   } else {
-    res.json({
+    res.status(500).json({
       success: false,
       message: 'Acceso denegado'
     });
