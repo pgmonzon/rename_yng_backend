@@ -23,6 +23,7 @@ app.use(cors({origin: 'http://localhost:4200'}));
 // Routes
 // ******
 app.use('/api/autorizar', require('./routes/autorizar.routes'));
+app.use('/api', require('./routes/jwt.routes'))
 app.use('/api/roles', require('./routes/roles.routes'));
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
 
