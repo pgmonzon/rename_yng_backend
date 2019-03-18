@@ -3,7 +3,8 @@ const usuarioCtrl = {};
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const config = require('../config/config');
-
+const msj = require('../_helpers/mensajes');
+const eH = require('../_helpers/error');
 
 usuarioCtrl.getUsuarios = async (req, res) => {
   const usuarios = await Usuario.find()
@@ -43,16 +44,16 @@ usuarioCtrl.deleteUsuario = async (req, res) => {
 }
 
 usuarioCtrl.loginUsuario = async (req, res) => {
-  const usuario = await Usuario.findOne({
-    'usuario': req.body.usuario,
-    'clave': req.body.clave
-  }).catch((error) => {
-    res.status(500).json({
-      success: false,
-      message: 'Acceso denegadowwwwwww'
-    });
-  })
-  if (usuario) {
+  try {
+    // req.params.id cuando tiene que mandar el id
+    if (!req.body.usuario || !req.body.clave) eH.throwError(400, 'BadRequest', 'Che, no mandaste el usuario o la clave') ()
+    const usuario = await Usuario
+      .findOne({'usuario': req.body.usuario, 'clave': req.body.clave})
+      .then(
+        eH.throwIf(r => !r, 403, 'Forbidden', 'Es una fiesta privada'),
+        eH.throwError(500, 'InternalServerError')
+      )
+
     const payload = {
       usuario : usuario.usuario
     };
@@ -62,18 +63,10 @@ usuarioCtrl.loginUsuario = async (req, res) => {
       expiresIn: config.expiraEn,
       algorithm: config.algoritmo
     };
-
     const token = jwt.sign(payload, fs.readFileSync(config.pathKeys+'/private.key', 'utf8'), signOptions);
-    res.status(200).json({
-      success: true,
-      message: 'Token',
-      token: token
-    });
-  } else {
-    res.status(500).json({
-      success: false,
-      message: 'Acceso denegado'
-    });
+    msj.sendSuccess(res, 'Bueeenas')({token})
+  } catch (error) {
+    msj.sendError(res)(error)
   }
 }
 

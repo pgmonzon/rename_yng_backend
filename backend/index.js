@@ -5,6 +5,8 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const config = require('./config/config');
+const eH = require('./_helpers/error');
+const msj = require('./_helpers/mensajes');
 
 // Settings
 // ********
@@ -26,6 +28,21 @@ app.use('/api/autorizar', require('./routes/autorizar.routes'));
 app.use('/api', require('./routes/jwt.routes'))
 app.use('/api/roles', require('./routes/roles.routes'));
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
+
+// 404
+// ***
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  err.type = 'Not Found';
+  next(err);
+});
+
+// Error Handler
+// *************
+app.use(function(error, req, res, next) {
+  msj.sendError(res, error.status)(error)
+});
 
 // Starting the server
 // *******************
