@@ -3,4 +3,5 @@ module.exports = {
   'pathKeys': 'C:/Users/pgmon/Google Drive/YangeeReloaded/backend/config/keys',
   'expiraEn': '12h',
   'algoritmo': 'RS256',
+  'saltRounds': 5,
 };
