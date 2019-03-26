@@ -20,6 +20,8 @@ routerJWT.use((req, res, next) => {
           message: 'token inválido'
         });
       } else {
+        process.env['USR_LOGUEADO'] = decoded.usuario;
+        process.env['ID_LOGUEADO'] = decoded.id;
         req.decoded = decoded;
         next();
       }
