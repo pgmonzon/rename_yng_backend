@@ -10,10 +10,12 @@ const msj = require('./_helpers/mensajes');
 
 // Settings
 // ********
-app.set('port', process.env.PORT || 3113)
+app.set('port', process.env.PORT || 3113);
+process.env['USR_LOGUEADO'] = 'huésped';
+process.env['ID_LOGUEADO'] = '111111111111111111111111';
 
-mongoose.connect(config.database, { useNewUrlParser: true })
-  .then(db => console.log('MongoDB'))
+mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
+  .then(db => console.log('MongoDB ' + mongoose.version))
   .catch(err => console.error(err));
 
 // Middlewares
@@ -26,6 +28,7 @@ app.use(cors({origin: 'http://localhost:4200'}));
 // ******
 app.use('/api/autorizar', require('./routes/autorizar.routes'));
 app.use('/api', require('./routes/jwt.routes'))
+app.use('/api/permisos', require('./routes/permisos.routes'));
 app.use('/api/roles', require('./routes/roles.routes'));
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
 
@@ -41,11 +44,11 @@ app.use(function(req, res, next) {
 // Error Handler
 // *************
 app.use(function(error, req, res, next) {
-  msj.sendError(res, error.status)(error)
+  msj.sendError(req, res, 'error', error.status)(error)
 });
 
 // Starting the server
 // *******************
 app.listen(app.get('port'), () => {
-  console.log('Escuchando en el ', app.get('port'));
+  console.log('Escuchando en el', app.get('port'));
 });
