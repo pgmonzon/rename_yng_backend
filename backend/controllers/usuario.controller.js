@@ -57,6 +57,7 @@ usuarioCtrl.loginUsuario = async (req, res) => {
     if (!bcrypt.compareSync(req.body.clave, usuario.clave)) eH.throwError(403, 'Forbidden', 'No hay mas lugar') ()
 
     const payload = {
+      id: usuario._id,
       usuario : usuario.usuario
     };
     const signOptions = {
@@ -66,9 +67,12 @@ usuarioCtrl.loginUsuario = async (req, res) => {
       algorithm: config.algoritmo
     };
     const token = jwt.sign(payload, fs.readFileSync(config.pathKeys+'/private.key', 'utf8'), signOptions);
-    msj.sendSuccess(res, 'Bueeenas')({token})
+    process.env['USR_LOGUEADO'] = usuario.usuario;
+    process.env['ID_LOGUEADO'] = usuario._id;
+
+    msj.sendSuccess(req, res, 'login', 'Bueeenas')({token})
   } catch (error) {
-    msj.sendError(res)(error)
+    msj.sendError(req, res, 'errorLogin')(error)
   }
 }
 
