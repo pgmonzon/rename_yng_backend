@@ -1,5 +1,4 @@
 const Usuario = require('../models/usuario');
-const Login = require('../models/login');
 const usuarioCtrl = {};
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -52,10 +51,10 @@ usuarioCtrl.loginUsuario = async (req, res) => {
     const usuario = await Usuario
       .findOne({'usuario': req.body.usuario})
       .then(
-        eH.throwIf(r => !r, 401, 'Unauthorized', 'Es una fiesta privada'),
+        eH.throwIf(r => !r, 403, 'Forbidden', 'Es una fiesta privada'),
         eH.throwError(500, 'InternalServerError')
       )
-    if (!bcrypt.compareSync(req.body.clave, usuario.clave)) eH.throwError(401, 'Unauthorized', 'No hay mas lugar') ()
+    if (!bcrypt.compareSync(req.body.clave, usuario.clave)) eH.throwError(403, 'Forbidden', 'No hay mas lugar') ()
 
     const payload = {
       id: usuario._id,
@@ -67,16 +66,11 @@ usuarioCtrl.loginUsuario = async (req, res) => {
       expiresIn: config.expiraEn,
       algorithm: config.algoritmo
     };
-    const tokenGenerado = jwt.sign(payload, fs.readFileSync(config.pathKeys+'/private.key', 'utf8'), signOptions);
-    const login = new  Login({
-      usuarioId: usuario._id,
-      usuario: usuario.usuario,
-      nombre: usuario.nombre,
-      apellido: usuario.apellido,
-      token: tokenGenerado
-    });
-      process.env['USR_LOGUEADO'] = usuario.usuario;
-    msj.sendSuccess(req, res, 'login', 'Bueeenas', login)({login})
+    const token = jwt.sign(payload, fs.readFileSync(config.pathKeys+'/private.key', 'utf8'), signOptions);
+    process.env['USR_LOGUEADO'] = usuario.usuario;
+    process.env['ID_LOGUEADO'] = usuario._id;
+
+    msj.sendSuccess(req, res, 'login', 'Bueeenas')({token})
   } catch (error) {
     msj.sendError(req, res, 'errorLogin')(error)
   }

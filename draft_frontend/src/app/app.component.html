@@ -1,0 +1,39 @@
+<!-- header content -->
+<header>
+  <nav *ngIf="currentUser">
+    <div class="nav-wrapper">
+      <a href="#!" class="brand-logo">Yangee Reloaded</a>
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li>{{currentUser.usuario}}</li>
+        <li><a href="/">Dashboard</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a (click)="logout()">Logout</a></li>
+        <li><a href="/crypto">Crypto</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <ul class="sidenav" id="mobile-demo">
+    <li><a href="/">Dashboard</a></li>
+    <li><a href="/login">Login</a></li>
+    <li><a (click)="logout()">Logout</a></li>
+    <li><a href="/crypto">Crypto</a></li>
+</ul>
+</header>
+
+<!-- main content -->
+<main>
+  <div class="container">
+      <app-alert></app-alert>
+      <router-outlet></router-outlet>
+    </div>
+</main>
+
+<!-- footer content -->
+<footer class="page-footer">
+<div class="container">
+    &copy; {{ ahora | date:'yyyy' }} YangeeReloaded
+</div>
+</footer>
+
